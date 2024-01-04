@@ -16,6 +16,8 @@ const applyRoutes = async (path, routes) => {
 
 const routePath = "../routes/";
 const routeFiles = getFiles(`/${routePath}`);
+const routeAdminPath = "../routes/admin/";
+const routeAdminFiles = getFiles(`/${routeAdminPath}`);
 
 const expressService = {
   init: async () => {
@@ -24,10 +26,10 @@ const expressService = {
         Loading routes automatically
       */
       let routes = await applyRoutes(routePath, routeFiles);
+      let adminRoutes = await applyRoutes(routeAdminPath, routeAdminFiles);
 
       const app = express();
       const server = http.createServer(app);
-
       app.use(express.json());
       app.use(cors());
       app.use(express.urlencoded({ extended: true }));
@@ -37,7 +39,7 @@ const expressService = {
         return next();
       });
 
-      // app.use([...routes]);
+      app.use([...adminRoutes]);
       app.use(globalErrorHandler);
 
       server.listen(process.env.PORT || 3001);

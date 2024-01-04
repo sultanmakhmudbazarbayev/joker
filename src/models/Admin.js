@@ -1,5 +1,6 @@
 import Sequelize, { Model } from "sequelize";
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from "bcryptjs";
 
 class Admin extends Model {
   static init(sequelize) {
@@ -12,19 +13,7 @@ class Admin extends Model {
           allowNull: false,
           unique: true,
         },
-        name: {
-          type: Sequelize.ENUM(
-            "diamonds",
-            "hearts",
-            "spades",
-            "clubs",
-            "silver",
-            "gold",
-            "platinum",
-            "brilliant",
-          ),
-          allowNull: false,
-        },
+        name: Sequelize.TEXT,
         login: {
           allowNull: false,
           type: Sequelize.STRING,
@@ -39,13 +28,22 @@ class Admin extends Model {
         underscored: true,
       }
     );
+
+    this.addHook("beforeSave", async (item) => {
+      if (item.password) {
+        item.password_hash = await bcrypt.hash(item.password, 8);
+      }
+    });
     
     // this.sync({ alter: true });
     return this;
   }
 
   static associate(models) {
-    
+  }
+
+  checkPassword(password) {
+    return bcrypt.compare(password, this.password_hash);
   }
 }
 
