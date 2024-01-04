@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import Admin from "../../models/Admin";
+import Team from "../models/Team";
 import { ValidationError } from "~/src/utils/ApiError";
 
 let controller = {
@@ -7,25 +7,31 @@ let controller = {
     try {
     const values = {
         name: req.body.name,
-        login: req.body.login,
-        password: req.body.password,
     }
 
     const schema = Yup.object()
         .shape({
             name: Yup.string().required(),
-            login: Yup.string().required(),
-            password: Yup.string().required().min(6),
         });
 
     if (!(await schema.isValid(values))) {
         throw new ValidationError();
     } 
 
-    await Admin.create(values)
+    await Team.create(values)
 
     return res.status(200).json({
-        msg: "success"
+        msg: "success",
+    });
+    } catch (error) {
+      next(error);
+    }
+  },
+  update: async (req, res, next) => {
+    try {
+
+    return res.status(200).json({
+        msg: "success",
     });
     } catch (error) {
       next(error);

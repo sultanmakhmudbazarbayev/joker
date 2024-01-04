@@ -39,7 +39,7 @@ const expressService = {
         return next();
       });
 
-      app.use([...adminRoutes]);
+      app.use([...routes, ...adminRoutes]);
       app.use(globalErrorHandler);
 
       server.listen(process.env.PORT || 3001);
