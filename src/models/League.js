@@ -7,7 +7,7 @@ class League extends Model {
       {
         id: {
           type: Sequelize.TEXT,
-          defaultValue: () => uuidv4(), // Use Sequelize hook to generate UUID
+          defaultValue: () => uuidv4(),
           primaryKey: true,
           allowNull: false,
           unique: true,
@@ -36,12 +36,12 @@ class League extends Model {
       }
     );
 
-    this.sync({ alter: true });
+    // this.sync({ alter: true });
     return this;
   }
 
   static associate(models) {
-    
+    this.hasOne(models.Suit, { foreignKey: "suit_id", as: "suit" });
   }
 }
 

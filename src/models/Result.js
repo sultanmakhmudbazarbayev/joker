@@ -1,7 +1,7 @@
 import Sequelize, { Model } from "sequelize";
 import { v4 as uuidv4 } from 'uuid';
 
-class Player extends Model {
+class Result extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -12,14 +12,8 @@ class Player extends Model {
           allowNull: false,
           unique: true,
         },
-        name: {
-          allowNull: false,
-          type: Sequelize.STRING,
-        },
-        team_id: {
-          type: Sequelize.UUID,
-          allowNull: false,
-        }
+        quiz_id: Sequelize.UUID,
+        result: Sequelize.JSONB
       },
       {
         sequelize,
@@ -34,8 +28,8 @@ class Player extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Team, { foreignKey: "team_id", as: "team" });
+    this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
   }
 }
 
-export default Player;
+export default Result;

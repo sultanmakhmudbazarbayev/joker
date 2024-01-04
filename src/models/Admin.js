@@ -7,7 +7,7 @@ class Admin extends Model {
       {
         id: {
           type: Sequelize.TEXT,
-          defaultValue: () => uuidv4(), // Use Sequelize hook to generate UUID
+          defaultValue: () => uuidv4(),
           primaryKey: true,
           allowNull: false,
           unique: true,
@@ -40,7 +40,7 @@ class Admin extends Model {
       }
     );
     
-    this.sync({ alter: true });
+    // this.sync({ alter: true });
     return this;
   }
 

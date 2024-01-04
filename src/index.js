@@ -9,7 +9,6 @@ const services = [expressService, sequelizeService];
   try {
     for (const service of services) {
       await service.init();
-      console.log("Server initialized.");
     }
 
   } catch (error) {

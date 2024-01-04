@@ -1,7 +1,7 @@
 import Sequelize, { Model } from "sequelize";
 import { v4 as uuidv4 } from 'uuid';
 
-class Rank extends Model {
+class Round extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -12,33 +12,21 @@ class Rank extends Model {
           allowNull: false,
           unique: true,
         },
-        name: {
+        name: Sequelize.TEXT,
+        count: Sequelize.INTEGER,
+        quiz_id: Sequelize.UUID,
+        round_type: {
             type: Sequelize.ENUM(
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7",
-                "8",
-                "9",
-                "10",
-                "jack",
-                "queen",
-                "king",
-                "ace",
+                "choice",
+                "combination",
+                "spades_queen",
+                "joker_secret",
+                "solitaire",
                 "joker",
+                "royal_flash",
+                "all_in"
               ),
         },
-        league_id: {
-            type: Sequelize.UUID,
-        },
-        suit_id: {
-            type: Sequelize.UUID,
-        },
-        present_id: {
-            type: Sequelize.UUID,
-        }
       },
       {
         sequelize,
@@ -53,8 +41,10 @@ class Rank extends Model {
   }
 
   static associate(models) {
-    this.hasOne(models.League, { foreignKey: "league_id", as: "league" });
+    this.hasMany(models.Question, { foreignKey: "round_id", as: "questions" });
+    this.hasOne(models.RoundResult, { foreignKey: "round_id", as: "round_result" });
+    this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
   }
 }
 
-export default Rank;
+export default Round;

@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import databaseConfig from "~/src/config/database";
-import { getFiles } from "~/src/utils";
+import { getFiles, syncModels } from "~/src/utils";
 
 const modelPath = "../models/";
 const modelFiles = getFiles(`/${modelPath}`);
@@ -24,7 +24,7 @@ const sequelizeService = {
         model.default.associate && model.default.associate(connection.models);
       });
 
-      // await connection.sync({ alter: true });
+      await syncModels();
 
       console.log("[SEQUELIZE] Database service initialized");
     } catch (error) {
