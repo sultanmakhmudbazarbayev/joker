@@ -7,11 +7,13 @@ const controller = {
     try {
     const values = {
         name: req.body.name,
+        image: req.body.image,
     }
 
     const schema = Yup.object()
         .shape({
             name: Yup.string().required(),
+            image: Yup.string(),
         });
 
     if (!(await schema.isValid(values))) {
@@ -19,16 +21,6 @@ const controller = {
     } 
 
     await Team.create(values)
-
-    return res.status(200).json({
-        msg: "success",
-    });
-    } catch (error) {
-      next(error);
-    }
-  },
-  update: async (req, res, next) => {
-    try {
 
     return res.status(200).json({
         msg: "success",

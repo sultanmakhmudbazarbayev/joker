@@ -13,6 +13,7 @@ class Question extends Model {
           unique: true,
         },
         round_id: Sequelize.UUID,
+        quiz_id: Sequelize.UUID,
         order: Sequelize.INTEGER,
         time: Sequelize.INTEGER,
         question: Sequelize.JSONB

@@ -49,7 +49,7 @@ export const syncModels = async () => {
     await Suit.sync();
     await Team.sync();
 
-    console.log('[SEQUELIZE] Models synchronized successfully.');
+    console.log('[SEQUELIZE] Models synchronized successfully');
   } catch (error) {
     console.error('[SEQUELIZE] Error synchronizing models:', error);
   }

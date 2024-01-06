@@ -4,6 +4,7 @@ import path from "path";
 import http from "http";
 import globalErrorHandler from "../middlewares/errorHandler.middleware.js";
 import { getFiles } from "../utils/index.js";
+import socketService from "./socket.io.service.js";
 
 const applyRoutes = async (path, routes) => {
   const data = [];
@@ -30,14 +31,15 @@ const expressService = {
       let adminRoutes = await applyRoutes(routeAdminPath, routeAdminFiles);
 
       const app = express();
-      app.use(express.static(path.join(__dirname, '../../public'), { dotfiles: 'deny' }));
       const server = http.createServer(app);
+      const io = await socketService.init(server);
+      app.use(express.static(path.join(__dirname, '../../public'), { dotfiles: 'deny' }));
       app.use(express.json());
       app.use(cors());
       app.use(express.urlencoded({ extended: true }));
 
       app.use((req, res, next) => {
-        // req.io = io;
+        req.io = io;
         return next();
       });
 
@@ -45,7 +47,7 @@ const expressService = {
       app.use(globalErrorHandler);
 
       server.listen(process.env.PORT || 3001);
-      console.log("[EXPRESS] Express initialized");
+      console.log("[EXPRESS] Express service initialized");
     } catch (error) {
       console.log("[EXPRESS] Error during express service initialization");
       throw error;

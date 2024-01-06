@@ -14,7 +14,6 @@ const controller = {
         .shape({
             name: Yup.string().required(),
             team_id: Yup.string().required(),
-
         });
 
     if (!(await schema.isValid(values))) {
