@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 import http from "http";
 import globalErrorHandler from "../middlewares/errorHandler.middleware.js";
 import { getFiles } from "../utils/index.js";
@@ -29,6 +30,7 @@ const expressService = {
       let adminRoutes = await applyRoutes(routeAdminPath, routeAdminFiles);
 
       const app = express();
+      app.use(express.static(path.join(__dirname, '../../public'), { dotfiles: 'deny' }));
       const server = http.createServer(app);
       app.use(express.json());
       app.use(cors());

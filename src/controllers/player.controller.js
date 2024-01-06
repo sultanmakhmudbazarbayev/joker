@@ -2,7 +2,7 @@ import * as Yup from "yup";
 import Player from "../models/Player";
 import { ValidationError } from "~/src/utils/ApiError";
 
-let controller = {
+const controller = {
     create: async (req, res, next) => {
     try {
     const values = {
