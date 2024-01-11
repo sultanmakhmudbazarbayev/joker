@@ -20,32 +20,30 @@ let controller = {
           throw new ValidationError();
       } 
 
-      const user = await Admin.findOne({
+      const _user = await Admin.findOne({
         where: { 
             login: values.login 
         },
-        attributes: [
-          'id', 
-          'name',
-          'login',
-          'createdAt',
-          'password_hash'
-        ]
       });
 
-      if (!user) {
+      if (!_user) {
           throw new BadRequestError();
       } 
 
-      if (!(await user.checkPassword(values.password))) {
+      if (!(await _user.checkPassword(values.password))) {
           throw new UnauthorizedError();
       } 
 
       const token = JwtService.jwtSign({
-        user_id: user.id,
+        user_id: _user.id,
       }, process.env.JWT_SECRET);
 
-      delete user.password_hash
+      const user = {
+        id: _user.id,
+        name: _user.name,
+        login: _user.login,
+        createdAt: _user.createdAt
+      }
 
       return res.status(200).json({
         status: "OK",
