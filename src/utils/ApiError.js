@@ -23,6 +23,10 @@ const DEFAULT_ERRORS = {
     code: "BAD_REQUEST",
     message: { en: "Bad request", ru: "Неверный запрос" },
   },
+  QUIZ_NOT_FOUND: {
+    code: "QUIZ_NOT_FOUND",
+    message: { en: "Quiz not found", ru: "Тест не найден" },
+  },
   FORBIDDEN: {
     code: "FORBIDDEN",
     message: { en: "Permission denied", ru: "Доступ запрещен" },
@@ -73,6 +77,15 @@ export class NotFoundError extends ApiError {
   constructor(
     message = DEFAULT_ERRORS.NOT_FOUND.message,
     type = DEFAULT_ERRORS.NOT_FOUND.code
+  ) {
+    super(message, 404, type);
+  }
+}
+
+export class QuizNotFoundError extends ApiError {
+  constructor(
+    message = DEFAULT_ERRORS.QUIZ_NOT_FOUND.message,
+    type = DEFAULT_ERRORS.QUIZ_NOT_FOUND.code
   ) {
     super(message, 404, type);
   }

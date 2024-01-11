@@ -3,7 +3,7 @@ const controller = {
     try {
 
     return res.status(200).json({
-        msg: "success",
+        status: "OK",
         filename: req.uploadedFilename
     });
     } catch (error) {

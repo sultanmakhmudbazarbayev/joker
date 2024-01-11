@@ -14,9 +14,6 @@ class Quiz extends Model {
         },
         name: Sequelize.TEXT,
         image: Sequelize.TEXT,
-        teams: {
-            type: Sequelize.ARRAY(Sequelize.TEXT),
-          },
       },
       {
         sequelize,
@@ -32,9 +29,7 @@ class Quiz extends Model {
 
   static associate(models) {
     this.hasMany(models.Question, { foreignKey: "quiz_id", as: "questions" });
-    this.hasMany(models.RoundResult, { foreignKey: "quiz_id", as: "round_results" });
     this.hasMany(models.Round, { foreignKey: "quiz_id", as: "rounds" });
-    this.hasOne(models.Result, { foreignKey: "quiz_id", as: "result" });
 
   }
 }

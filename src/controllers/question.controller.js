@@ -29,7 +29,7 @@ const controller = {
     await Question.create(values)
 
     return res.status(200).json({
-        msg: "success",
+        status: "OK",
     });
     } catch (error) {
       next(error);

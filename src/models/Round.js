@@ -42,7 +42,7 @@ class Round extends Model {
 
   static associate(models) {
     this.hasMany(models.Question, { foreignKey: "round_id", as: "questions" });
-    this.hasOne(models.RoundResult, { foreignKey: "round_id", as: "round_result" });
+    // this.hasOne(models.RoundResult, { foreignKey: "round_id", as: "round_result" });
     this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
   }
 }

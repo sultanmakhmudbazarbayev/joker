@@ -12,6 +12,8 @@ import Round from "../models/Round";
 import RoundResult from "../models/RoundResult";
 import Suit from "../models/Suit";
 import Team from "../models/Team";
+import QuizSession from "../models/QuizSession";
+import Tablet from "../models/Tablet";
 
 export const getFiles = (path) => {
   return fs
@@ -36,6 +38,7 @@ export const getPagination = (page = 1, size) => {
 export const syncModels = async () => {
   try {
     await Admin.sync();
+    await Tablet.sync();
     await Answer.sync();
     await League.sync();
     await Player.sync();
@@ -48,6 +51,7 @@ export const syncModels = async () => {
     await RoundResult.sync();
     await Suit.sync();
     await Team.sync();
+    await QuizSession.sync();
 
     console.log('[SEQUELIZE] Models synchronized successfully');
   } catch (error) {

@@ -28,7 +28,7 @@ class Result extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
+    // this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
   }
 }
 

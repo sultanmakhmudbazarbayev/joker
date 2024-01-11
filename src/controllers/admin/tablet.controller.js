@@ -24,7 +24,7 @@ let controller = {
     await Tablet.create(values)
 
     return res.status(200).json({
-        msg: "success"
+        status: "OK"
     });
     } catch (error) {
       next(error);
@@ -44,7 +44,7 @@ let controller = {
     })
 
     return res.status(200).json({
-        msg: "success",
+        status: "OK",
         data: tablets
     });
     } catch (error) {

@@ -29,7 +29,6 @@ class Answer extends Model {
 
   static associate(models) {
     this.belongsTo(models.Question, { foreignKey: "question_id", as: "question" });
-    this.belongsTo(models.Team, { foreignKey: "team_id", as: "team" });
   }
 }
 

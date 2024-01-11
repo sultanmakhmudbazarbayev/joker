@@ -24,6 +24,13 @@ let controller = {
         where: { 
             login: values.login 
         },
+        attributes: [
+          'id', 
+          'name',
+          'login',
+          'createdAt',
+          'password_hash'
+        ]
       });
 
       if (!user) {
@@ -36,9 +43,17 @@ let controller = {
 
       const token = JwtService.jwtSign({
         user_id: user.id,
-      });
+      }, process.env.JWT_SECRET);
 
-      return res.status(200).json({ user, token });
+      delete user.password_hash
+
+      return res.status(200).json({
+        status: "OK",
+        data: {
+          user: user,
+          token: token
+        }
+      });
     } catch (error) {
       next(error);
     }

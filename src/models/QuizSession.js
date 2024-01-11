@@ -1,8 +1,7 @@
 import Sequelize, { Model } from "sequelize";
 import { v4 as uuidv4 } from 'uuid';
-import bcrypt from "bcryptjs";
 
-class Admin extends Model {
+class QuizSession extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -14,13 +13,12 @@ class Admin extends Model {
           unique: true,
         },
         name: Sequelize.TEXT,
-        login: {
-          allowNull: false,
-          type: Sequelize.STRING,
-          unique: true,
+        image: Sequelize.TEXT,
+        teams: {
+            type: Sequelize.ARRAY(Sequelize.TEXT),
         },
-        password: Sequelize.VIRTUAL,
-        password_hash: Sequelize.STRING,
+        quiz_id: Sequelize.UUID,
+        number: Sequelize.INTEGER
       },
       {
         sequelize,
@@ -30,23 +28,14 @@ class Admin extends Model {
       }
     );
 
-    this.addHook("beforeSave", async (item) => {
-      if (item.password) {
-        item.password_hash = await bcrypt.hash(item.password, 8);
-      }
-    });
-    
     // this.sync({ alter: true });
     return this;
   }
 
   static associate(models) {
-  }
+    this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
 
-  checkPassword(password) {
-    return bcrypt.compare(password, this.password_hash);
   }
 }
 
-export default Admin;
-
+export default QuizSession;

@@ -20,12 +20,25 @@ let controller = {
 
     if (!(await schema.isValid(values))) {
         throw new ValidationError();
-    } 
+    }
+
+    const admin = await Admin.findOne({
+        where: {
+            login: values.login
+        }
+    })
+
+    if(admin) {
+        return res.status(200).json({
+            status: "error",
+            msg: "Login already in use"
+        });
+    }
 
     await Admin.create(values)
 
     return res.status(200).json({
-        msg: "success"
+        status: "OK"
     });
     } catch (error) {
       next(error);
