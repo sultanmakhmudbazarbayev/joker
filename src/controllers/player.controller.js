@@ -3,24 +3,27 @@ import Player from "../models/Player";
 import { ValidationError } from "~/src/utils/ApiError";
 
 const controller = {
-    create: async (req, res, next) => {
+    add: async (req, res, next) => {
     try {
     const values = {
-        name: req.body.name,
-        team_id: req.body.team_id,
+        players: req.body.players,
     }
 
     const schema = Yup.object()
         .shape({
-            name: Yup.string().required(),
-            team_id: Yup.string().required(),
+            players: Yup.array().required(),
         });
 
     if (!(await schema.isValid(values))) {
         throw new ValidationError();
     } 
 
-    await Player.create(values)
+    for(const player of values.players) {
+        await Player.create({
+            name: player.name,
+            team_id: player.team_id
+        })
+    }
 
     return res.status(200).json({
         status: "OK"

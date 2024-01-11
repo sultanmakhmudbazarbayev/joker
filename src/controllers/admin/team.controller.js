@@ -1,9 +1,10 @@
 import * as Yup from "yup";
-import Team from "../models/Team";
+import Team from "../../models/Team";
+import Player from "../../models/Player";
 import { ValidationError } from "~/src/utils/ApiError";
 
 const controller = {
-    create: async (req, res, next) => {
+  create: async (req, res, next) => {
     try {
     const values = {
         name: req.body.name,
@@ -20,10 +21,24 @@ const controller = {
         throw new ValidationError();
     } 
 
-    await Team.create(values)
+    const team = await Team.create(values)
 
     return res.status(200).json({
         status: "OK",
+    });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  get_teams: async (req, res, next) => {
+    try {
+
+    const teams = await Team.findAll()
+
+    return res.status(200).json({
+        status: "OK",
+        data: teams
     });
     } catch (error) {
       next(error);
