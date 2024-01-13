@@ -1,5 +1,5 @@
 import { Router } from "express";
-import controller from "../../controllers/question.controller.js";
+import controller from "../../controllers/admin/question.controller.js";
 import { verifyAdmin } from "../../middlewares/admin/auth.middleware.js";
 
 const route = Router();

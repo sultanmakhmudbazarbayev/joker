@@ -32,6 +32,23 @@ class QuizSession extends Model {
     return this;
   }
 
+  static sessionNumberExists = async (sessionNumber) => {
+    const existingSession = await QuizSession.findOne({
+      where: { number: sessionNumber },
+    });
+  
+    return !!existingSession;
+  };
+  
+  static generateUniqueSessionNumber = async () => {
+    let sessionNumber;
+    do {
+      sessionNumber = Math.floor(1000 + Math.random() * 9000);
+    } while (await this.sessionNumberExists(sessionNumber));
+  
+    return sessionNumber;
+  };
+
   static associate(models) {
     this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
 
