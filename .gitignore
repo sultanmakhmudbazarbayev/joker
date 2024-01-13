@@ -10,5 +10,4 @@
 .vscode
 .idea
 
-ecosystem.config.js
 package-lock.json
