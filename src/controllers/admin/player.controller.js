@@ -1,5 +1,5 @@
 import * as Yup from "yup";
-import Player from "../models/Player";
+import Player from "../../models/Player";
 import { ValidationError } from "~/src/utils/ApiError";
 
 const controller = {

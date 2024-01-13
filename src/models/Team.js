@@ -13,9 +13,9 @@ class Team extends Model {
           unique: true,
         },
         name: Sequelize.TEXT,
-        points_count: Sequelize.INTEGER,
+        points_count: Sequelize.INTEGER, //game points (for wins)
         rank_id: Sequelize.UUID,
-        visits_count: Sequelize.INTEGER,
+        visits_count: Sequelize.INTEGER, //number of games
         present_id: Sequelize.UUID,
         free_games_count: Sequelize.INTEGER,
         image: Sequelize.TEXT,

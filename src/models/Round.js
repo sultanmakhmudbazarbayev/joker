@@ -1,6 +1,8 @@
 import Sequelize, { Model } from "sequelize";
 import { v4 as uuidv4 } from 'uuid';
 
+import { QUIZ_ROUND_TYPES } from "../constants";
+
 class Round extends Model {
   static init(sequelize) {
     super.init(
@@ -12,8 +14,8 @@ class Round extends Model {
           allowNull: false,
           unique: true,
         },
-        name: Sequelize.TEXT,
-        count: Sequelize.INTEGER,
+        name: Sequelize.TEXT, // 
+        count: Sequelize.INTEGER, // which round
         quiz_id: Sequelize.UUID,
         round_type: {
             type: Sequelize.ENUM(
@@ -36,8 +38,19 @@ class Round extends Model {
       }
     );
 
+    this.sequelizeInstance = sequelize;
     // this.sync({ alter: true });
     return this;
+  }
+
+
+  static async createRoundsForQuiz(quiz_id) {
+    const roundsData = QUIZ_ROUND_TYPES.map((round) => ({
+      ...round,
+      quiz_id,
+    }));
+  
+    await Promise.all(roundsData.map((round) => this.sequelizeInstance.create(round)));
   }
 
   static associate(models) {

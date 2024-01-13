@@ -1,7 +1,7 @@
 import * as Yup from "yup";
-import QuizSession from "../models/QuizSession";
-import { ValidationError, QuizNotFoundError } from "../utils/ApiError";
-import Quiz from "../models/Quiz";
+import QuizSession from "../../models/QuizSession";
+import { ValidationError, QuizNotFoundError } from "../../utils/ApiError";
+import Quiz from "../../models/Quiz";
 
 const controller = {
     create: async (req, res, next) => {

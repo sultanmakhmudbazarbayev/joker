@@ -12,11 +12,22 @@ const socketService = {
 
       io.on("connection", async (socket) => {
 
+        socket.on("join-room", (data) => {
+          const sessionNumber = data.session.number;
+          const team = data.session.team;
+          socket.join(data.number);
+          console.log('team joined room')
+
+          io.to(sessionNumber).emit("team-joined", { team });
+        });
+
+
+
+
+        
+
         socket.on("disconnect", async () => {
 
-        });
-        socket.on("join", (channel) => {
-        
         });
       });
 

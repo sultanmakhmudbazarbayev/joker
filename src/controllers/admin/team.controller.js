@@ -1,6 +1,5 @@
 import * as Yup from "yup";
 import Team from "../../models/Team";
-import Player from "../../models/Player";
 import { ValidationError } from "~/src/utils/ApiError";
 
 const controller = {
@@ -25,6 +24,7 @@ const controller = {
 
     return res.status(200).json({
         status: "OK",
+        data: team
     });
     } catch (error) {
       next(error);

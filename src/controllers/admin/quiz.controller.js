@@ -1,5 +1,6 @@
 import * as Yup from "yup";
-import Quiz from "../models/Quiz";
+import Quiz from "../../models/Quiz";
+import Round from "../../models/Round";
 import { ValidationError } from "~/src/utils/ApiError";
 
 const controller = {
@@ -21,6 +22,9 @@ const controller = {
     } 
 
     const quiz = await Quiz.create(values)
+    
+    await Round.createRoundsForQuiz(quiz.id)
+
 
     return res.status(200).json({
         status: "OK",
