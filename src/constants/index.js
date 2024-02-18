@@ -48,3 +48,24 @@ export const QUIZ_ROUND_TYPES = [
 
     }
 ]
+
+export const QUESTION_DEFAULT_IMAGE_URL = "http://localhost:3001/images/default/default_question_image.jpeg"
+
+export const QUESTION_TYPES = {
+    open: {
+        name: "Открытый вопрос",
+        technical_name: "open"
+    },
+    withAnswers: {
+        name: "С вариантами ответа",
+        technical_name: "with_answers"
+    }
+}
+
+export const QUESTION_TIME_LIMITS = {
+    5: "5 секунд",
+    10: "10 секунд",
+    15: "15 секунд",
+    30: "30 секунд",
+    10: "60 секунд",
+}

@@ -4,7 +4,8 @@ const controller = {
 
     return res.status(200).json({
         status: "OK",
-        filename: req.uploadedFilename
+        filename: req.uploadedFilename,
+        url: process.env.BASE_URL + `/images/${req.uploadedFilename}`
     });
     } catch (error) {
       next(error);

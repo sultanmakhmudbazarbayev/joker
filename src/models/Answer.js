@@ -13,7 +13,8 @@ class Answer extends Model {
           unique: true,
         },
         question_id: Sequelize.UUID,
-        answer: Sequelize.JSONB
+        answer: Sequelize.JSONB,
+        correct: Sequelize.BOOLEAN
       },
       {
         sequelize,

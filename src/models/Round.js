@@ -50,7 +50,7 @@ class Round extends Model {
       quiz_id,
     }));
   
-    await Promise.all(roundsData.map((round) => this.sequelizeInstance.create(round)));
+    await Promise.all(roundsData.map((round) => this.create(round)));
   }
 
   static associate(models) {

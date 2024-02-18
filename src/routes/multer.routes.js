@@ -4,7 +4,10 @@ import { verifyAdmin } from "../middlewares/admin/auth.middleware.js";
 import uploadImage from "../middlewares/multer.middleware.js";
 
 const route = Router();
-route.post("/upload", [verifyAdmin, uploadImage], controller.save);
+route.post("/upload", 
+// [verifyAdmin], 
+    uploadImage,
+    controller.save);
 
 
 export default route;

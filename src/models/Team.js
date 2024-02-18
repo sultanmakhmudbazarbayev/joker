@@ -36,7 +36,6 @@ class Team extends Model {
     this.hasMany(models.Player, { foreignKey: "team_id", as: "players" });
     this.hasOne(models.Rank, { foreignKey: "rank_id", as: "rank" });
     this.hasOne(models.Present, { foreignKey: "present_id", as: "present" });
-    this.hasOne(models.Answer, { foreignKey: "team_id", as: "answer" });
     this.belongsTo(models.Tablet, { foreignKey: "team_id", as: "tablet" });
 
   }

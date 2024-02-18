@@ -4,6 +4,14 @@ import { verifyAdmin } from "../../middlewares/admin/auth.middleware.js";
 
 const route = Router();
 
+route.get("/quizzes/:id", 
+// [verifyAdmin], 
+controller.getQuizById);
+
+route.get("/quizzes", 
+// [verifyAdmin], 
+controller.get);
+
 route.post("/quiz", 
 // [verifyAdmin], 
 controller.create);
