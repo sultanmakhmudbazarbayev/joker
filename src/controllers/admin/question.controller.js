@@ -3,6 +3,7 @@ import Question from "../../models/Question";
 import { ValidationError } from "~/src/utils/ApiError";
 import Round from "../../models/Round";
 import Answer from "../../models/Answer";
+import { QUESTION_DEFAULT_IMAGE_URL } from "../../constants";
 
 const controller = {
     create: async (req, res, next) => {
@@ -12,7 +13,8 @@ const controller = {
         round_id: req.body.round_id,
         order: req.body.order,
         time: req.body.time,
-        question: req.body.question
+        question: req.body.question,
+        image: req.body.image ? req.body.image : QUESTION_DEFAULT_IMAGE_URL
     }
 
     const schema = Yup.object()
@@ -50,6 +52,28 @@ const controller = {
     }
     },
 
+    update: async (req, res, next) => {
+        try {
+        const { id } = req.params;
+
+        const { image } = req.body;
+
+        const values = {
+            image,
+        }
+
+        const question = await Question.update(values, {
+            where: {
+                id
+            }
+        })
+
+        return res.status(200).json({ok: "OK"});
+        } catch (error) {
+        next(error);
+        }
+    },
+
     get_question_by_id: async (req, res, next) => {
         try {
         const { id } = req.params;
@@ -60,8 +84,6 @@ const controller = {
                 as: "answers",
             }
         })
-
-        console.log('question', question)
 
         return res.status(200).json({question});
         } catch (error) {

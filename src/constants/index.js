@@ -49,7 +49,7 @@ export const QUIZ_ROUND_TYPES = [
     }
 ]
 
-export const QUESTION_DEFAULT_IMAGE_URL = "http://localhost:3001/images/default/default_question_image.jpeg"
+export const QUESTION_DEFAULT_IMAGE_URL = "http://localhost:3001/images/default/no-image.jpg"
 
 export const QUESTION_TYPES = {
     open: {

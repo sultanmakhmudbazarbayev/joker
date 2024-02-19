@@ -8,6 +8,10 @@ route.post("/question",
 // [verifyAdmin], 
 controller.create);
 
+route.put("/question/:id", 
+// [verifyAdmin], 
+controller.update);
+
 route.get("/question/:id", 
 // [verifyAdmin], 
 controller.get_question_by_id);
