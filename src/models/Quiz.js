@@ -1,7 +1,7 @@
 import Sequelize, { Model } from "sequelize";
 import { v4 as uuidv4 } from 'uuid';
 
-import { QUESTION_TYPES } from "../constants";
+import { DEFAULT_QUESTION_TYPE } from "../constants";
 import { QUESTION_DEFAULT_IMAGE_URL } from "../constants";
 
 class Quiz extends Model {
@@ -48,7 +48,7 @@ class Quiz extends Model {
             order: 1,
             time: 15,
             question: "How are you doing?",
-            type: QUESTION_TYPES.withAnswers.technical_name,
+            type: DEFAULT_QUESTION_TYPE.technical_name,
             image: QUESTION_DEFAULT_IMAGE_URL,
             audio: null,
             video: null

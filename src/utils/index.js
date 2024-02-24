@@ -14,6 +14,8 @@ import Suit from "../models/Suit";
 import Team from "../models/Team";
 import QuizSession from "../models/QuizSession";
 import Tablet from "../models/Tablet";
+import QuestionType from "../models/QuestionType";
+import QuestionTime from "../models/QuestionTime";
 
 export const getFiles = (path) => {
   return fs
@@ -48,6 +50,8 @@ export const syncModels = async () => {
     await Result.sync();
     await Round.sync();
     await Question.sync();
+    await QuestionType.sync();
+    await QuestionTime.sync();
     await RoundResult.sync();
     await Suit.sync();
     await Team.sync();

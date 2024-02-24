@@ -2,6 +2,7 @@ import * as Yup from "yup";
 import Quiz from "../../models/Quiz";
 import Round from "../../models/Round";
 import Question from "../../models/Question";
+import Answer from "../../models/Answer";
 import { ValidationError } from "~/src/utils/ApiError";
 
 const controller = {
@@ -18,6 +19,12 @@ const controller = {
                         {
                             model: Question,
                             as: "questions",
+                            include: [
+                                {
+                                    model: Answer,
+                                    as: "answers"
+                                }
+                            ]
                         }
                     ],
                     order: [[{ model: Question, as: 'questions' }, 'order', 'ASC']]

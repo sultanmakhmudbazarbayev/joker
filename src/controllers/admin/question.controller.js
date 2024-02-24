@@ -3,7 +3,9 @@ import Question from "../../models/Question";
 import { ValidationError } from "~/src/utils/ApiError";
 import Round from "../../models/Round";
 import Answer from "../../models/Answer";
-import { QUESTION_DEFAULT_IMAGE_URL } from "../../constants";
+import { QUESTION_DEFAULT_IMAGE_URL, QUESTION_TYPES } from "../../constants";
+import QuestionType from "../../models/QuestionType";
+import QuestionTime from "../../models/QuestionTime";
 
 const controller = {
     create: async (req, res, next) => {
@@ -89,6 +91,72 @@ const controller = {
         } catch (error) {
         next(error);
         }
+    },
+
+    get_question_types: async (req, res, next) => {
+
+        const questionTypes = await QuestionType.findAll()
+
+        return res.status(200).json({types: questionTypes});
+    },
+
+    create_question_types: async (req, res, next) => {
+        try {
+        const values = {
+            name: req.body.name,
+            technical_name: req.body.technical_name,
+        }
+    
+        const schema = Yup.object()
+            .shape({
+                name: Yup.string().required(),
+                technical_name: Yup.string().required(),
+            });
+    
+        if (!(await schema.isValid(values))) {
+            throw new ValidationError();
+        } 
+    
+
+        await QuestionType.create(values)
+    
+        return res.status(200).json({
+            status: "OK"
+        });
+        } catch (error) {
+          next(error);
+        }
+    },
+    
+    create_question_time: async (req, res, next) => {
+        try {
+        const values = {
+            time: req.body.time,
+        }
+    
+        const schema = Yup.object()
+            .shape({
+                time: Yup.number().required(),
+            });
+    
+        if (!(await schema.isValid(values))) {
+            throw new ValidationError();
+        } 
+    
+
+        await QuestionTime.create(values)
+    
+        return res.status(200).json({
+            status: "OK"
+        });
+        } catch (error) {
+          next(error);
+        }
+    },
+    get_question_time: async (req, res, next) => {
+        const questionTimes = await QuestionTime.findAll()
+
+        return res.status(200).json({time_options: questionTimes});
     },
 };
 

@@ -16,4 +16,21 @@ route.get("/question/:id",
 // [verifyAdmin], 
 controller.get_question_by_id);
 
+route.get("/question-types", 
+// [verifyAdmin], 
+controller.get_question_types);
+
+route.post("/question-types", 
+// [verifyAdmin], 
+controller.create_question_types);
+
+route.post("/question-time", 
+// [verifyAdmin], 
+controller.create_question_time);
+
+route.get("/question-time", 
+// [verifyAdmin], 
+controller.get_question_time);
+
+
 export default route;
