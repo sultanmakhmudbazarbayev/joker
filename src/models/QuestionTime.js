@@ -28,7 +28,7 @@ class QuestionTime extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Question, { foreignKey: "question_time_id", as: "question_time" });
+    // this.belongsTo(models.Question, { foreignKey: "question_time_id", as: "question_time" });
   }
 }
 

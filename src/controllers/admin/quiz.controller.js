@@ -4,6 +4,8 @@ import Round from "../../models/Round";
 import Question from "../../models/Question";
 import Answer from "../../models/Answer";
 import { ValidationError } from "~/src/utils/ApiError";
+import QuestionTime from "../../models/QuestionTime";
+import QuestionType from "../../models/QuestionType";
 
 const controller = {
     getQuizById: async (req, res, next) => {
@@ -23,7 +25,7 @@ const controller = {
                                 {
                                     model: Answer,
                                     as: "answers"
-                                }
+                                },
                             ]
                         }
                     ],

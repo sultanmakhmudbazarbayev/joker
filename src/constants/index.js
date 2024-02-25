@@ -74,3 +74,7 @@ export const QUESTION_TIME_LIMITS = {
     30: "30 секунд",
     10: "60 секунд",
 }
+
+export const DEFAULT_QUESTION_TIME = {
+    time: 30
+}

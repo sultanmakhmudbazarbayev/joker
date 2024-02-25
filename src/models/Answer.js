@@ -12,9 +12,12 @@ class Answer extends Model {
           allowNull: false,
           unique: true,
         },
+        correct: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false,
+        },
         question_id: Sequelize.UUID,
         answer: Sequelize.JSONB,
-        correct: Sequelize.BOOLEAN
       },
       {
         sequelize,

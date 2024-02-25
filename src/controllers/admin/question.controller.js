@@ -3,7 +3,7 @@ import Question from "../../models/Question";
 import { ValidationError } from "~/src/utils/ApiError";
 import Round from "../../models/Round";
 import Answer from "../../models/Answer";
-import { QUESTION_DEFAULT_IMAGE_URL, QUESTION_TYPES } from "../../constants";
+import { DEFAULT_QUESTION_TIME, DEFAULT_QUESTION_TYPE, QUESTION_DEFAULT_IMAGE_URL, QUESTION_TYPES } from "../../constants";
 import QuestionType from "../../models/QuestionType";
 import QuestionTime from "../../models/QuestionTime";
 
@@ -43,6 +43,20 @@ const controller = {
     const order = questions[questions.length-1].order + 1;
     values.order = order;
 
+    const defaultQuestionType = await QuestionType.findOne({
+        where: {
+            technical_name: DEFAULT_QUESTION_TYPE.technical_name
+        }
+    })
+    values.question_type_id = defaultQuestionType.id;
+
+    const defaultQuestionTime = await QuestionTime.findOne({
+        where: {
+            time: DEFAULT_QUESTION_TIME.time
+        }
+    })
+    values.question_time_id = defaultQuestionTime.id;
+
     const question = await Question.create(values)
 
     return res.status(200).json({
@@ -57,11 +71,16 @@ const controller = {
     update: async (req, res, next) => {
         try {
         const { id } = req.params;
-
-        const { image } = req.body;
-
+        
+        const { image, 
+                question_type_id,
+                question_time_id
+            } = req.body;
+        
         const values = {
             image,
+            question_type_id,
+            question_time_id
         }
 
         const question = await Question.update(values, {
@@ -69,6 +88,7 @@ const controller = {
                 id
             }
         })
+
 
         return res.status(200).json({ok: "OK"});
         } catch (error) {
@@ -81,10 +101,12 @@ const controller = {
         const { id } = req.params;
 
         const question = await Question.findByPk(id, {
-            include: {
-                model: Answer,
-                as: "answers",
-            }
+            include: [
+                {
+                    model: Answer,
+                    as: "answers",
+                },
+            ]
         })
 
         return res.status(200).json({question});
@@ -157,6 +179,14 @@ const controller = {
         const questionTimes = await QuestionTime.findAll()
 
         return res.status(200).json({time_options: questionTimes});
+    },
+    get_question_type_by_id: async (req, res, next) => {
+
+        const {id} = req.params;
+
+        const questionType = await QuestionType.findByPk(id)
+
+        return res.status(200).json({type: questionType});
     },
 };
 

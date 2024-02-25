@@ -29,7 +29,7 @@ class QuestionType extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.Question, { foreignKey: "question_type_id", as: "question_type" });
+    // this.belongsTo(models.Question, { foreignKey: "question_type_id", as: "question_type" });
   }
 }
 

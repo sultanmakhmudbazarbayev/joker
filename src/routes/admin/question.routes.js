@@ -24,6 +24,10 @@ route.post("/question-types",
 // [verifyAdmin], 
 controller.create_question_types);
 
+route.get("/question-types/:id", 
+// [verifyAdmin], 
+controller.get_question_type_by_id);
+
 route.post("/question-time", 
 // [verifyAdmin], 
 controller.create_question_time);
