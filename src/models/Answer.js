@@ -17,7 +17,8 @@ class Answer extends Model {
           defaultValue: false,
         },
         question_id: Sequelize.UUID,
-        answer: Sequelize.JSONB,
+        answer: Sequelize.STRING,
+        image: Sequelize.STRING,
       },
       {
         sequelize,

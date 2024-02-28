@@ -72,13 +72,13 @@ class Quiz extends Model {
 
           await sequelize.models.Answer.create({
             question_id: question.id,
-            answer: {text: "Good!"},
+            answer: "Good!",
             correct: false
           })
 
           await sequelize.models.Answer.create({
             question_id: question.id,
-            answer: {text: "Marvellous!"},
+            answer: "Marvellous!",
             correct: true
           })
 

@@ -24,9 +24,11 @@ const controller = {
                             include: [
                                 {
                                     model: Answer,
-                                    as: "answers"
+                                    as: "answers",
+                                    order: [['created_at', 'ASC']]
                                 },
-                            ]
+                            ],
+                            
                         }
                     ],
                     order: [[{ model: Question, as: 'questions' }, 'order', 'ASC']]

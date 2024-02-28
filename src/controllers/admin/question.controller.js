@@ -74,13 +74,17 @@ const controller = {
         
         const { image, 
                 question_type_id,
-                question_time_id
+                question_time_id,
+                question: questionText,
+                audio
             } = req.body;
         
         const values = {
             image,
+            audio,
             question_type_id,
-            question_time_id
+            question_time_id,
+            question: questionText
         }
 
         const question = await Question.update(values, {
@@ -105,6 +109,7 @@ const controller = {
                 {
                     model: Answer,
                     as: "answers",
+                    order: [['created_at', 'ASC']]
                 },
             ]
         })

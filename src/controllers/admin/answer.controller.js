@@ -32,6 +32,8 @@ const controller = {
             const { id } = req.params;
             const values = {
                 correct: req.body.correct,
+                answer: req.body.answer,
+                image: req.body.image
             }
     
             await Answer.update(values, {
@@ -40,7 +42,7 @@ const controller = {
                 }
             })
     
-        return res.status(200).json({ msg: "OK" });
+        return res.status(200).json({ ok: "Updated seccessfully." });
         } catch (error) {
           next(error);
         }

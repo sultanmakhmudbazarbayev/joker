@@ -17,7 +17,7 @@ class Question extends Model {
         order: Sequelize.INTEGER,
         question_time_id: Sequelize.UUID,
         question_type_id: Sequelize.UUID,
-        question: Sequelize.JSONB,
+        question: Sequelize.STRING,
         image: Sequelize.STRING,
         audio: Sequelize.STRING,
         video: Sequelize.STRING,
