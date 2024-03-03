@@ -43,7 +43,7 @@ class QuizSession extends Model {
   static generateUniqueSessionNumber = async () => {
     let sessionNumber;
     do {
-      sessionNumber = Math.floor(1000 + Math.random() * 9000);
+      sessionNumber = Math.floor(1000 + Math.random() * 99999999);
     } while (await this.sessionNumberExists(sessionNumber));
   
     return sessionNumber;
