@@ -18,6 +18,7 @@ class Team extends Model {
         visits_count: Sequelize.INTEGER, //number of games
         free_games_count: Sequelize.INTEGER,
         image: Sequelize.TEXT,
+        capitan_id: Sequelize.UUID
       },
       {
         sequelize,

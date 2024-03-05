@@ -16,6 +16,8 @@ class Player extends Model {
           allowNull: false,
           type: Sequelize.STRING,
         },
+        image: Sequelize.STRING,
+        is_capitan: Sequelize.BOOLEAN,
         team_id: {
           type: Sequelize.UUID,
           allowNull: false,

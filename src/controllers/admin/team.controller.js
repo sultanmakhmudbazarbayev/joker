@@ -44,6 +44,37 @@ const controller = {
       next(error);
     }
   },
+
+  get_team_by_id: async (req, res, next) => {
+    try {
+
+    const {id} = req.params;
+
+    const team = await Team.findByPk(id)
+
+    return res.status(200).json({
+        status: "OK",
+        data: team
+    });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  update: async (req, res, next) => {
+    try {
+
+    const {id} = req.params;
+    
+
+    return res.status(200).json({
+        status: "OK",
+        data: 'team'
+    });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default controller;
