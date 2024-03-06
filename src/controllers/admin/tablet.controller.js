@@ -4,24 +4,25 @@ import Tablet from "../../models/Tablet";
 import Team from "../../models/Team";
 
 let controller = {
-  assign: async (req, res, next) => {
+  set_tablets: async (req, res, next) => {
     try {
-    const values = {
-        tablet_number: req.body.tablet_number,
-        team_id: req.body.team_id,
-    }
 
-    const schema = Yup.object()
-        .shape({
-            tablet_number: Yup.number().required(),
-            team_id: Yup.string().required(),
-        });
+    const {tablets} = req.body
 
-    if (!(await schema.isValid(values))) {
-        throw new ValidationError();
-    } 
+    const formattedTablets = tablets.map((tablet => {
+      return {
+        team_id: tablet.id,
+        number: tablet.number
+      }
+    }))
 
-    await Tablet.create(values)
+    console.log('tablets', formattedTablets)
+
+    await Tablet.destroy({
+      where: {},
+    });
+
+    await Tablet.bulkCreate(formattedTablets)
 
     return res.status(200).json({
         status: "OK"

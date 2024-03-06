@@ -2,9 +2,9 @@ import { Router } from "express";
 import controller from "../../controllers/admin/tablet.controller.js";
 
 const route = Router();
-route.post("/assign", 
+route.post("/set-tablets", 
     // [authMiddleware, dealerMiddleware], 
-    controller.assign);
+    controller.set_tablets);
 
 route.get("/tablets", 
 // [authMiddleware, dealerMiddleware], 
