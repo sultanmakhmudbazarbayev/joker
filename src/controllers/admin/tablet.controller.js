@@ -52,6 +52,33 @@ let controller = {
       next(error);
     }
   },
+
+  get_tablet: async (req, res, next) => {
+    try {
+
+    const {number} = req.query;
+
+    const tablet = await Tablet.findOne({
+        where: {
+          number: number
+        },
+        include: [
+            {
+                model: Team,
+                as: 'tablet-team',
+                attributes: [],
+            },
+        ]
+    })
+
+    return res.status(200).json({
+        status: "OK",
+        data: tablet
+    });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default controller;

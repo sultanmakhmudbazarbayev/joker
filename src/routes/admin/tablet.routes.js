@@ -10,4 +10,8 @@ route.get("/tablets",
 // [authMiddleware, dealerMiddleware], 
 controller.get_tablet_teams);
 
+route.get("/tablet", 
+// [authMiddleware, dealerMiddleware], 
+controller.get_tablet);
+
 export default route;

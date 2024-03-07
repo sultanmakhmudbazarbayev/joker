@@ -66,24 +66,25 @@ const socketService = {
         socket.on("connect-tablets", () => {
           console.log('admin send trigger for tablets to connect')
 
-          socket.emit("connect-tablet", { message: "Tablets connection initiated" });
+          io.emit("connect-tablet", { message: "Tablets connection initiated" });
           // socket-client gets teams by correponding tablet number
           // then emits "join-team"
         });
         
         socket.on("join-team", (team) => {
+
           if(team.id && team.name) {
             sessionData.teams.push(team)
             
             
-            console.log(`team connected to room ${sessionData.number}`)
+            console.log(`team ${team.name} connected to room ${sessionData.number}`)
             socket.join(sessionData.number);
             
             io.to(sessionData.number).emit("team-joined", team);
           }
         });
 
-        socket.on("leave-team", (team) => {
+        io.on("leave-team", (team) => {
 
           if(team.id && team.name) {
             const updatedTeams = sessionData.teams.filter((sessionTeam) => sessionTeam.id !== team.id)
@@ -93,36 +94,11 @@ const socketService = {
           }
         });
 
-        socket.on("start-round", async (round) => {
+        socket.on("start-session", async (data) => {
 
-          if(round.new) {
-            sessionData.current_round += 1;
-          }
-        
-          const roundData = await Round.findOne({
-            where: {
-              count: sessionData.current_round,
-              quiz_id: quizData.id
-            },
-              include: [
-                {
-                    model: Question,
-                    as: "questions",
-                    order: [['order', 'ASC']],
-                    include: [
-                        {
-                            model: Answer,
-                            as: "answers",
-                            order: [['created_at', 'ASC']]
-                        },
-                    ],
-                    
-                }
-            ]
-          })
-        
+          console.log('data', data)
+          io.emit("session-started");
       
-          io.to(sessionData.number).emit("round-started", roundData);
         });
 
 
