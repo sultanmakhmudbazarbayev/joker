@@ -86,10 +86,30 @@ const socketService = {
             }
           }
         });
+
+        socket.on("get-questions", async ({round: count}) => {
+          if (count) {
+            
+            const questions = await Question.findAll({
+              where: {
+                quiz_id: quizData.id,
+                count: count
+              },
+              include: [
+                {
+                    model: Answer,
+                    as: "answers",
+                    order: [['created_at', 'ASC']]
+                },
+            ],
+            })
+
+            io.to(sessionData.number).emit("_get-questions", questions);
+          }
+        });
         
 
         io.on("leave-team", (team) => {
-
           if(team.id && team.name) {
             const updatedTeams = sessionData.teams.filter((sessionTeam) => sessionTeam.id !== team.id)
             sessionData.teams = updatedTeams;
@@ -121,62 +141,51 @@ const socketService = {
 
           io.to(sessionData.number).emit("_next-round", data);
 
-      });
-
-      socket.on("start-round", data => {
-
-        console.log('start-round', data)
-        sessionData.current_page = data.page
-
-        io.to(sessionData.number).emit("_start-round", data);
-
-    });
-
-        socket.on("get-round", async data => {
-
-          console.log('round changed', data.round)
-
-          if(quizData.id) {
-            const round = await Round.findOne({
-              where: {
-                quiz_id: quizData.id,
-              },
-              include: [
-                {
-                    model: Question,
-                    as: "questions",
-                }
-            ],
-            order: [[{ model: Question, as: 'questions' }, 'order', 'ASC']]
-            })
-            io.to(sessionData.number).emit("get-round", {round: round});
-          }
-          
         });
+
+        socket.on("start-round", data => {
+
+          console.log('start-round', data)
+          sessionData.current_page = data.page
+
+          io.to(sessionData.number).emit("_start-round", data);
+
+        });
+
+        // socket.on("get-round", async data => {
+
+        //   console.log('round changed', data.round)
+
+        //   if(quizData.id) {
+        //     const round = await Round.findOne({
+        //       where: {
+        //         quiz_id: quizData.id,
+        //       },
+        //       include: [
+        //         {
+        //             model: Question,
+        //             as: "questions",
+        //             include: [
+        //               {
+        //                   model: Answer,
+        //                   as: "answers",
+        //                   order: [['created_at', 'ASC']]
+        //               },
+        //           ],
+        //         },
+        //     ],
+        //     order: [[{ model: Question, as: 'questions' }, 'order', 'ASC']]
+        //     })
+        //     io.to(sessionData.number).emit("get-round", {round: round});
+        //   }
+          
+        // });
 
         socket.on("get-all-teams", data => {
 
           console.log('get-all-teams')
           io.to(sessionData.number).emit("_get-all-teams", {teams: sessionData.teams});
         });
-
-        socket.on("get-all-teams", data => {
-
-          console.log('get-all-teams')
-          io.to(sessionData.number).emit("get-all-teams", {teams: sessionData.teams});
-        });
-
-
-
-
-        // socket.on("finish-session", (tabletData) => {
-
-        //   quizSessionTeams = [];
-        //   sessionNumber = undefined;
-        //   quizSession = undefined;
-      
-          // io.to(sessionNumber).emit("team-joined", {quizSessionTeams});
-        // });
 
 
         
