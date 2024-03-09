@@ -40,7 +40,6 @@ const socketService = {
             quizData.image = quiz.image;
             quizData.id = quiz.id;
 
-
             sessionData.number = await QuizSession.generateUniqueSessionNumber();
 
             if(!sessionData.id) {
@@ -53,9 +52,8 @@ const socketService = {
 
               sessionData.id = newSession.id;
             }
-        
-            socket.join(sessionData.number);
 
+            socket.join(sessionData.number);
             console.log(`admin connected to room ${sessionData.number}`)
 
           } catch (error) {
@@ -68,11 +66,13 @@ const socketService = {
           console.log('admin send trigger for tablets to connect')
 
           io.emit("connect-tablet", { message: "Tablets connection initiated" });
-          // socket-client gets teams by correponding tablet number
-          // then emits "join-team"
+
         });
         
         socket.on("join-team", (team) => {
+          if(team.role === 'tv') {
+            socket.join(sessionData.number);
+          }
           if (team.id && team.name) {
             // Check if the team is already in the room
             const alreadyInRoom = sessionData.teams.some(teamInRoom => teamInRoom.id === team.id);
@@ -89,22 +89,27 @@ const socketService = {
 
         socket.on("get-questions", async ({round: count}) => {
           if (count) {
-            
-            const questions = await Question.findAll({
+
+            const round = await Round.findOne({
               where: {
                 quiz_id: quizData.id,
                 count: count
               },
               include: [
                 {
-                    model: Answer,
-                    as: "answers",
-                    order: [['created_at', 'ASC']]
+                    model: Question,
+                    as: "questions",
+                    include: [
+                      {
+                          model: Answer,
+                          as: "answers",
+                          order: [['created_at', 'ASC']]
+                      },
+                  ],
                 },
             ],
             })
-
-            io.to(sessionData.number).emit("_get-questions", {questions});
+            io.to(sessionData.number).emit("_get-questions", {questions: round.questions});
           }
         });
         
@@ -120,14 +125,12 @@ const socketService = {
 
         socket.on("start-session", async (data) => {
 
-          console.log('data', data)
           io.emit("session-started");
       
         });
 
         socket.on("next-slide", data => {
 
-            console.log('next-slide', data)
             sessionData.current_page = data.page
 
             io.to(sessionData.number).emit("_next-slide", data);
@@ -136,7 +139,6 @@ const socketService = {
 
         socket.on("next-round", data => {
 
-          console.log('next-round', data)
           sessionData.current_page = data.page
 
           io.to(sessionData.number).emit("_next-round", data);
@@ -145,49 +147,16 @@ const socketService = {
 
         socket.on("start-round", data => {
 
-          console.log('start-round', data)
           sessionData.current_page = data.page
 
           io.to(sessionData.number).emit("_start-round", data);
 
         });
 
-        // socket.on("get-round", async data => {
-
-        //   console.log('round changed', data.round)
-
-        //   if(quizData.id) {
-        //     const round = await Round.findOne({
-        //       where: {
-        //         quiz_id: quizData.id,
-        //       },
-        //       include: [
-        //         {
-        //             model: Question,
-        //             as: "questions",
-        //             include: [
-        //               {
-        //                   model: Answer,
-        //                   as: "answers",
-        //                   order: [['created_at', 'ASC']]
-        //               },
-        //           ],
-        //         },
-        //     ],
-        //     order: [[{ model: Question, as: 'questions' }, 'order', 'ASC']]
-        //     })
-        //     io.to(sessionData.number).emit("get-round", {round: round});
-        //   }
-          
-        // });
-
         socket.on("get-all-teams", data => {
 
           io.to(sessionData.number).emit("_get-all-teams", {teams: sessionData.teams});
         });
-
-
-        
 
         socket.on("disconnect", async () => {
 
