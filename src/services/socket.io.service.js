@@ -104,7 +104,7 @@ const socketService = {
             ],
             })
 
-            io.to(sessionData.number).emit("_get-questions", questions);
+            io.to(sessionData.number).emit("_get-questions", {questions});
           }
         });
         
@@ -183,7 +183,6 @@ const socketService = {
 
         socket.on("get-all-teams", data => {
 
-          console.log('get-all-teams')
           io.to(sessionData.number).emit("_get-all-teams", {teams: sessionData.teams});
         });
 
