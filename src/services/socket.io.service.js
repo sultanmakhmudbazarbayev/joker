@@ -9,10 +9,8 @@ import Answer from "../models/Answer";
 
 
 const initialRound = 1;
-const sessionData = {
-  teams: [],
-  current_round: initialRound,
-}
+const initialPage = 0;
+const sessionData = {}
 const quizData = {}
 
 const socketService = {
@@ -28,6 +26,9 @@ const socketService = {
 
         socket.on("connect-admin", async (quizId) => {
           try {
+            sessionData.teams = [];
+            sessionData.current_round = initialRound;
+            sessionData.current_page = initialPage;
 
             const quiz = await Quiz.findByPk(quizId)
 
@@ -72,17 +73,20 @@ const socketService = {
         });
         
         socket.on("join-team", (team) => {
-
-          if(team.id && team.name) {
-            sessionData.teams.push(team)
-            
-            
-            console.log(`team ${team.name} connected to room ${sessionData.number}`)
-            socket.join(sessionData.number);
-            
-            io.to(sessionData.number).emit("team-joined", team);
+          if (team.id && team.name) {
+            // Check if the team is already in the room
+            const alreadyInRoom = sessionData.teams.some(teamInRoom => teamInRoom.id === team.id);
+        
+            // If not, add the team to the session and join the room
+            if (!alreadyInRoom) {
+              sessionData.teams.push(team); // Add the team only if it's not already there
+              console.log(`Team ${team.name} connected to room ${sessionData.number}`);
+              socket.join(sessionData.number);
+              io.to(sessionData.number).emit("team-joined", team);
+            }
           }
         });
+        
 
         io.on("leave-team", (team) => {
 
@@ -100,6 +104,69 @@ const socketService = {
           io.emit("session-started");
       
         });
+
+        socket.on("next-slide", data => {
+
+            console.log('next-slide', data)
+            sessionData.current_page = data.page
+
+            io.to(sessionData.number).emit("_next-slide", data);
+
+        });
+
+        socket.on("next-round", data => {
+
+          console.log('next-round', data)
+          sessionData.current_page = data.page
+
+          io.to(sessionData.number).emit("_next-round", data);
+
+      });
+
+      socket.on("start-round", data => {
+
+        console.log('start-round', data)
+        sessionData.current_page = data.page
+
+        io.to(sessionData.number).emit("_start-round", data);
+
+    });
+
+        socket.on("get-round", async data => {
+
+          console.log('round changed', data.round)
+
+          if(quizData.id) {
+            const round = await Round.findOne({
+              where: {
+                quiz_id: quizData.id,
+              },
+              include: [
+                {
+                    model: Question,
+                    as: "questions",
+                }
+            ],
+            order: [[{ model: Question, as: 'questions' }, 'order', 'ASC']]
+            })
+            io.to(sessionData.number).emit("get-round", {round: round});
+          }
+          
+        });
+
+        socket.on("get-all-teams", data => {
+
+          console.log('get-all-teams')
+          io.to(sessionData.number).emit("get-all-teams", {teams: sessionData.teams});
+        });
+
+        socket.on("get-all-teams", data => {
+
+          console.log('get-all-teams')
+          io.to(sessionData.number).emit("get-all-teams", {teams: sessionData.teams});
+        });
+
+
 
 
         // socket.on("finish-session", (tabletData) => {
