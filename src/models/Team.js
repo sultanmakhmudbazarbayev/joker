@@ -34,6 +34,7 @@ class Team extends Model {
 
   static associate(models) {
     this.hasMany(models.Player, { foreignKey: "team_id", as: "players" });
+    this.belongsTo(models.Player, { foreignKey: "capitan_id", as: "capitan" });
     this.hasOne(models.Rank, { foreignKey: "rank_id", as: "rank" });
     this.hasOne(models.Present, { foreignKey: "present_id", as: "present" });
     this.belongsTo(models.Tablet, { foreignKey: "team_id", as: "tablet" });

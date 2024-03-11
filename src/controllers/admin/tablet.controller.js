@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 import { ValidationError } from "~/src/utils/ApiError";
 import Tablet from "../../models/Tablet";
+import Player from "../../models/Player";
 import Team from "../../models/Team";
 
 let controller = {
@@ -40,6 +41,7 @@ let controller = {
                 model: Team,
                 as: 'tablet-team',
                 attributes: [],
+                include: ["capitan"]
             },
         ]
     })

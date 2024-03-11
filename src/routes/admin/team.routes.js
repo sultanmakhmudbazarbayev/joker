@@ -16,7 +16,7 @@ route.post("/team",
 // [verifyAdmin], 
 controller.create);
 
-route.patch("/team/:id", 
+route.put("/team/:id", 
 // [verifyAdmin], 
 controller.update);
 

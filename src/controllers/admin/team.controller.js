@@ -65,11 +65,19 @@ const controller = {
     try {
 
     const {id} = req.params;
-    
+    const values = {
+      image: req.body.image
+    }
+
+    await Team.update(values, {
+      where: { id },
+    });
+
+    const updatedTeam = await Team.findByPk(id)
 
     return res.status(200).json({
         status: "OK",
-        data: 'team'
+        data: updatedTeam
     });
     } catch (error) {
       next(error);

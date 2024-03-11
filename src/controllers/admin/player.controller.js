@@ -74,7 +74,6 @@ const controller = {
   
       await Player.update(playerValues, {
         where: { id },
-        returning: true, 
       });
 
       const updatedPlayer = await Player.findByPk(id)
