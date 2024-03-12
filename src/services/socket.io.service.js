@@ -6,10 +6,11 @@ import Quiz from "../models/Quiz";
 import Round from "../models/Round";
 import Question from "../models/Question";
 import Answer from "../models/Answer";
+import TeamAnswer from "../models/TeamAnswers";
+import { Op } from "sequelize";
+import Team from "../models/Team";
 
 
-const initialRound = 1;
-const initialPage = 0;
 const sessionData = {}
 const quizData = {}
 
@@ -27,8 +28,7 @@ const socketService = {
         socket.on("connect-admin", async (quizId) => {
           try {
             sessionData.teams = [];
-            sessionData.current_round = initialRound;
-            sessionData.current_page = initialPage;
+            sessionData.results = {};
 
             const quiz = await Quiz.findByPk(quizId)
 
@@ -131,7 +131,6 @@ const socketService = {
 
         socket.on("next-slide", data => {
 
-            // sessionData.current_page = data.page
 
             io.to(sessionData.number).emit("_next-slide", data);
 
@@ -139,7 +138,6 @@ const socketService = {
 
         socket.on("prev-slide", data => {
 
-          // sessionData.current_page = data.page
 
           io.to(sessionData.number).emit("_prev-slide", data);
 
@@ -147,7 +145,6 @@ const socketService = {
 
         socket.on("next-round", data => {
 
-          // sessionData.current_page = data.page
 
           io.to(sessionData.number).emit("_next-round", data);
 
@@ -155,11 +152,294 @@ const socketService = {
 
         socket.on("start-round", data => {
 
-          // sessionData.current_page = data.page
 
           io.to(sessionData.number).emit("_start-round", data);
 
         });
+
+
+        socket.on("set-team-points", async data => {
+          const {roundId, questionId, teamId, points} = data;
+
+          const teamAnswer = await TeamAnswer.findOne({
+            where: {
+              quiz_session_id: sessionData.id,
+              round_id: roundId,
+              question_id: questionId,
+              team_id: teamId
+            }
+          })
+
+          if(!teamAnswer) {
+            const newTeamAnswer = await TeamAnswer.create({
+              quiz_session_id: sessionData.id,
+              round_id: roundId,
+              question_id: questionId,
+              team_id: teamId,
+              points: points
+            })
+          } else {
+            teamAnswer.points = points;
+            await teamAnswer.save()
+          }
+        
+        });
+
+        socket.on("get-half-statistics", async data => {
+          
+          const rounds = await Round.findAll({
+            where: {
+              quiz_id: quizData.id,
+              count: {
+                [Op.in]: [1,2,3,4]
+              },
+            },
+            order: [["count", 'ASC']]
+          })
+
+          const halfResults = [];
+
+          for(const sessionTeam of sessionData.teams) {
+            const team = {
+              name: sessionTeam.name,
+              total: 0,
+              date: Date.now()
+            }
+            for(const round of rounds) {
+              const allAnswers = await TeamAnswer.findAll({
+                where: {
+                  quiz_session_id: sessionData.id,
+                  round_id: round.id,
+                  team_id: sessionTeam.id,
+                }
+              })
+              const roundTotal = allAnswers.reduce((total, current) => {
+                return total + current.points;
+              }, 0);
+
+              team[`round_${round.count}`] = roundTotal;
+              team.total += roundTotal;
+            }
+
+            halfResults.push(team);
+          }
+
+          halfResults.sort((a, b) => b.total - a.total);
+          
+          io
+          .to(sessionData.number)
+          .emit("_get-half-statistics", {teams: halfResults});
+        });
+
+        socket.on("get-8-round-statistics", async data => {
+          
+          const rounds = await Round.findAll({
+            where: {
+              quiz_id: quizData.id,
+              count: {
+                [Op.in]: [1,2,3,4,5,6,7,8]
+              },
+            },
+            order: [["count", 'ASC']]
+          })
+
+          const halfResults = [];
+
+          for(const sessionTeam of sessionData.teams) {
+            const team = {
+              name: sessionTeam.name,
+              total: 0,
+              date: Date.now()
+            }
+            for(const round of rounds) {
+              const allAnswers = await TeamAnswer.findAll({
+                where: {
+                  quiz_session_id: sessionData.id,
+                  round_id: round.id,
+                  team_id: sessionTeam.id,
+                }
+              })
+              const roundTotal = allAnswers.reduce((total, current) => {
+                return total + current.points;
+              }, 0);
+
+              team[`round_${round.count}`] = roundTotal;
+              team.total += roundTotal;
+            }
+
+            halfResults.push(team);
+          }
+
+          halfResults.sort((a, b) => b.total - a.total);
+          
+          io
+          .to(sessionData.number)
+          .emit("_get-8-round-statistics", {teams: halfResults});
+        });
+
+        socket.on("get-total-statistics", async data => {
+          
+          const rounds = await Round.findAll({
+            where: {
+              quiz_id: quizData.id,
+              count: {
+                [Op.in]: [1,2,3,4,5,6,7,8,9]
+              },
+            },
+            order: [["count", 'ASC']]
+          })
+
+          const halfResults = [];
+
+          for(const sessionTeam of sessionData.teams) {
+            const team = {
+              name: sessionTeam.name,
+              total: 0,
+              date: Date.now()
+            }
+            for(const round of rounds) {
+              const allAnswers = await TeamAnswer.findAll({
+                where: {
+                  quiz_session_id: sessionData.id,
+                  round_id: round.id,
+                  team_id: sessionTeam.id,
+                }
+              })
+              const roundTotal = allAnswers.reduce((total, current) => {
+                return total + current.points;
+              }, 0);
+
+              team[`round_${round.count}`] = roundTotal;
+              team.total += roundTotal;
+            }
+
+            halfResults.push(team);
+          }
+
+          halfResults.sort((a, b) => b.total - a.total);
+          
+          io
+          .to(sessionData.number)
+          .emit("_get-total-statistics", {teams: halfResults});
+        });
+
+        socket.on("get-top-3", async data => {
+          
+          const rounds = await Round.findAll({
+            where: {
+              quiz_id: quizData.id,
+              count: {
+                [Op.in]: [1,2,3,4,5,6,7,8,9]
+              },
+            },
+            order: [["count", 'ASC']]
+          })
+
+          const halfResults = [];
+
+          for(const sessionTeam of sessionData.teams) {
+            const team = {
+              name: sessionTeam.name,
+              total: 0,
+              date: Date.now()
+            }
+            for(const round of rounds) {
+              const allAnswers = await TeamAnswer.findAll({
+                where: {
+                  quiz_session_id: sessionData.id,
+                  round_id: round.id,
+                  team_id: sessionTeam.id,
+                }
+              })
+              const roundTotal = allAnswers.reduce((total, current) => {
+                return total + current.points;
+              }, 0);
+
+              team[`round_${round.count}`] = roundTotal;
+              team.total += roundTotal;
+            }
+
+            halfResults.push(team);
+          }
+
+          halfResults.sort((a, b) => b.total - a.total);
+          
+          io
+          .to(sessionData.number)
+          .emit("_get-top-3", {teams: [halfResults[0], halfResults[1], halfResults[2]]});
+        });
+
+        socket.on("get-winner", async data => {
+          
+          const rounds = await Round.findAll({
+            where: {
+              quiz_id: quizData.id,
+              count: {
+                [Op.in]: [1,2,3,4,5,6,7,8,9]
+              },
+            },
+            order: [["count", 'ASC']]
+          })
+
+          const halfResults = [];
+
+          for(const sessionTeam of sessionData.teams) {
+            const team = {
+              name: sessionTeam.name,
+              total: 0,
+              date: Date.now()
+            }
+            for(const round of rounds) {
+              const allAnswers = await TeamAnswer.findAll({
+                where: {
+                  quiz_session_id: sessionData.id,
+                  round_id: round.id,
+                  team_id: sessionTeam.id,
+                }
+              })
+              const roundTotal = allAnswers.reduce((total, current) => {
+                return total + current.points;
+              }, 0);
+
+              team[`round_${round.count}`] = roundTotal;
+              team.total += roundTotal;
+            }
+
+            halfResults.push(team);
+          }
+
+          halfResults.sort((a, b) => b.total - a.total);
+          
+          io
+          .to(sessionData.number)
+          .emit("_get-winner", {teams: halfResults[0]});
+        });
+
+        socket.on('join-teams-manually', async data => {
+          const { teams } = data;
+
+          console.log('teams', teams)
+          
+          for(const team of teams) {
+            if(team.number !== '777') {
+              const teamData = await Team.findByPk(team.id);
+
+              if (teamData.id && teamData.name) {
+                // Check if the team is already in the room
+                const alreadyInRoom = sessionData.teams.some(teamInRoom => teamInRoom.id === teamData.id);
+            
+                // If not, add the team to the session and join the room
+                if (!alreadyInRoom) {
+                  sessionData.teams.push(teamData); // Add the team only if it's not already there
+                  io.to(sessionData.number).emit("team-joined", teamData);
+                }
+              }
+            }
+          }
+
+          console.log('sessionData.team', sessionData.teams)
+        })
+        
 
         socket.on("get-all-teams", data => {
 

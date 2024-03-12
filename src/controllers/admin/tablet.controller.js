@@ -68,7 +68,7 @@ let controller = {
             {
                 model: Team,
                 as: 'tablet-team',
-                attributes: [],
+                include: ["capitan"]
             },
         ]
     })
