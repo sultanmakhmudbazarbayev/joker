@@ -131,15 +131,23 @@ const socketService = {
 
         socket.on("next-slide", data => {
 
-            sessionData.current_page = data.page
+            // sessionData.current_page = data.page
 
             io.to(sessionData.number).emit("_next-slide", data);
 
         });
 
+        socket.on("prev-slide", data => {
+
+          // sessionData.current_page = data.page
+
+          io.to(sessionData.number).emit("_prev-slide", data);
+
+      });
+
         socket.on("next-round", data => {
 
-          sessionData.current_page = data.page
+          // sessionData.current_page = data.page
 
           io.to(sessionData.number).emit("_next-round", data);
 
@@ -147,7 +155,7 @@ const socketService = {
 
         socket.on("start-round", data => {
 
-          sessionData.current_page = data.page
+          // sessionData.current_page = data.page
 
           io.to(sessionData.number).emit("_start-round", data);
 
