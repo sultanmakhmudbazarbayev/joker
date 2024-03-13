@@ -89,43 +89,49 @@ const socketService = {
           }
         });
 
-        socket.on("get-questions", async ({round: count}) => {
+        socket.on("get-questions", async ({ round: count }) => {
           if (count) {
-
-            const round = await Round.findOne({
-              where: {
-                quiz_id: quizData.id,
-                count: count
-              },
-              include: [
-                {
-                    model: Question,
-                    as: "questions",
-                    include: [
-                      {
-                          model: Answer,
-                          as: "answers",
-                          order: [['created_at', 'ASC']]
+              try {
+                  const round = await Round.findOne({
+                      where: {
+                          quiz_id: quizData.id,
+                          count: count
                       },
-                  ],
-                },
-            ],
-            })
-
-            const updQuestions = await Promise.all(round.questions.map(async (q) => {
-              const time = await QuestionTime.findByPk(q.question_time_id);
-              const type = await QuestionType.findByPk(q.question_type_id);
-              return {
-                ...q,
-                time: time ? time.time : null,
-                type: type ? type.technical_name : null 
-              };
-            }));
-            
-
-            io.to(sessionData.number).emit("_get-questions", {questions: updQuestions});
+                      include: [{
+                          model: Question,
+                          as: "questions",
+                          include: [{
+                              model: Answer,
+                              as: "answers",
+                              order: [['created_at', 'ASC']]
+                          }],
+                      }],
+                  });
+      
+                  if (!round) {
+                      io.to(sessionData.number).emit("_get-questions", { error: "Round not found" });
+                      return;
+                  }
+      
+                  const updQuestions = await Promise.all(round.questions.map(async (q) => {
+                      const time = await QuestionTime.findByPk(q.question_time_id);
+                      const type = await QuestionType.findByPk(q.question_type_id);
+                      return {
+                          ...q.toJSON(), // Convert Sequelize model instance into a plain object
+                          time: time ? time.time : null,
+                          type: type ? type.technical_name : null 
+                      };
+                  }));
+      
+                  io.to(sessionData.number).emit("_get-questions", { questions: updQuestions });
+              } catch (error) {
+                  console.error('Error retrieving questions:', error);
+                  // Notify the client about the error
+                  io.to(sessionData.number).emit("_get-questions", { error: "Failed to retrieve questions" });
+              }
           }
-        });
+      });
+      
         
 
         io.on("leave-team", (team) => {

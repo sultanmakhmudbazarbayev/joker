@@ -26,7 +26,7 @@ class TeamAnswer extends Model {
       }
     );
 
-    // this.sync({ alter: true });
+   // this.sync({ alter: true });
     return this;
   }
 
