@@ -26,6 +26,21 @@ const controller = {
       next(error);
     }
   },
+
+  save_video: async (req, res, next) => {
+    try {
+
+      console.log('video uploading ' , req.uploadedFilename)
+
+    return res.status(200).json({
+        status: "OK",
+        filename: req.uploadedFilename,
+        url: `/videos/${req.uploadedFilename}`
+    });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 export default controller;

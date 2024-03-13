@@ -31,3 +31,18 @@ export const uploadAudio = (req, res, next) => {
     next()
   });
 };
+
+export const uploadVideo = (req, res, next) => {
+  upload.single('video')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      console.error(err)
+      return res.status(400).json({ error: 'Video upload error', message: err.message });
+    } else if (err) {
+      return res.status(500).json({ error: 'Internal server error', message: err.message });
+    }
+
+    // File uploaded successfully
+    req.uploadedFilename = req.file.filename;
+    next()
+  });
+};

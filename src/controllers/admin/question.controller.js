@@ -76,12 +76,14 @@ const controller = {
                 question_type_id,
                 question_time_id,
                 question: questionText,
-                audio
+                audio,
+                video
             } = req.body;
         
         const values = {
             image,
             audio,
+            video,
             question_type_id,
             question_time_id,
             question: questionText
