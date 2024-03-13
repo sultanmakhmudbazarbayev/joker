@@ -31,7 +31,7 @@ export const QUIZ_ROUND_TYPES = [
     },
     {
         round_type: "joker",
-        name: "«Туз в рукаве",
+        name: "Туз в рукаве",
         count: 6
 
     },
