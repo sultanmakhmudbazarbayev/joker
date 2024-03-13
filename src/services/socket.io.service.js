@@ -9,6 +9,8 @@ import Answer from "../models/Answer";
 import TeamAnswer from "../models/TeamAnswers";
 import { Op } from "sequelize";
 import Team from "../models/Team";
+import QuestionTime from "../models/QuestionTime";
+import QuestionType from "../models/QuestionType";
 
 
 const sessionData = {}
@@ -109,7 +111,19 @@ const socketService = {
                 },
             ],
             })
-            io.to(sessionData.number).emit("_get-questions", {questions: round.questions});
+
+            const updQuestions = await Promise.all(round.questions.map(async (q) => {
+              const time = await QuestionTime.findByPk(q.question_time_id);
+              const type = await QuestionType.findByPk(q.question_type_id);
+              return {
+                ...q,
+                time: time ? time.time : null,
+                type: type ? type.technical_name : null 
+              };
+            }));
+            
+
+            io.to(sessionData.number).emit("_get-questions", {questions: updQuestions});
           }
         });
         
