@@ -64,12 +64,13 @@ const controller = {
   update: async (req, res, next) => {
     try {
       const { id } = req.params; 
-      const { team_id, name, image, is_capitan } = req.body;
+      const { team_id, name, image, is_capitan, card } = req.body;
       
       const playerValues = {
         name,
         image,
-        is_capitan
+        is_capitan,
+        card
       };
   
       await Player.update(playerValues, {
@@ -78,7 +79,7 @@ const controller = {
 
       const updatedPlayer = await Player.findByPk(id)
   
-      if (is_capitan) {
+      if (is_capitan || image) {
         await Player.update({is_capitan: false}, {
             where: {
                 team_id: team_id,
@@ -87,7 +88,7 @@ const controller = {
                 }
             }
         })
-        await Team.update({ capitan_id: id }, {
+        await Team.update({ capitan_id: id, capitan_name: name, capitan_image: image, card: card }, {
           where: { id: team_id },
         });
       }

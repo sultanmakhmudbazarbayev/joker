@@ -19,7 +19,10 @@ class Team extends Model {
         free_games_count: Sequelize.INTEGER,
         image: Sequelize.TEXT,
         capitan_id: Sequelize.UUID,
-        team_id: Sequelize.UUID
+        team_id: Sequelize.UUID,
+        capitan_image: Sequelize.TEXT,
+        capitan_name: Sequelize.STRING,
+        card: Sequelize.STRING
       },
       {
         sequelize,

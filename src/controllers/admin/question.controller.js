@@ -16,7 +16,7 @@ const controller = {
         order: req.body.order,
         time: req.body.time,
         question: req.body.question,
-        image: req.body.image ? req.body.image : QUESTION_DEFAULT_IMAGE_URL
+        image: req.body.image ? req.body.image : null
     }
 
     const schema = Yup.object()

@@ -61,7 +61,7 @@ class Quiz extends Model {
             question: "How are you doing?",
             question_type_id: defaultQuestionType.id,
             question_time_id: defaultQuestionTime.id,
-            image: QUESTION_DEFAULT_IMAGE_URL,
+            image: null,
             audio: null,
             video: null
           }
