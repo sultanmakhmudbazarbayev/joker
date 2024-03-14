@@ -459,11 +459,18 @@ const socketService = {
 
           console.log('sessionData.team', sessionData.teams)
         })
-        
 
+        socket.on('joker', data => {
+          socket.to(sessionData.number).emit("_joker", "joker");
+        })
+        
         socket.on("get-all-teams", data => {
 
-          io.to(sessionData.number).emit("_get-all-teams", {teams: sessionData.teams});
+          const activeTeams = sessionData.teams.filter((team) => team.name !== 'tv')
+
+          io
+          .to(sessionData.number)
+          .emit("_get-all-teams", {teams: activeTeams});
         });
 
         socket.on("disconnect", async () => {
