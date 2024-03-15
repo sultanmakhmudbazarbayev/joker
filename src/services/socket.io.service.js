@@ -315,7 +315,9 @@ const socketService = {
             const team = {
               name: sessionTeam.name,
               total: 0,
-              date: Date.now()
+              date: Date.now(),
+	      capitan_image: sessionTeam.capitan_image,
+	      capitan_name: sessionTeam.capitan_name
             }
             for(const round of rounds) {
               const allAnswers = await TeamAnswer.findAll({
@@ -361,7 +363,9 @@ const socketService = {
             const team = {
               name: sessionTeam.name,
               total: 0,
-              date: Date.now()
+              date: Date.now(),
+	      capitan_name: sessionTeam.capitan_name,
+	      capitan_image: sessionTeam.capitan_image
             }
             for(const round of rounds) {
               const allAnswers = await TeamAnswer.findAll({
@@ -407,7 +411,9 @@ const socketService = {
             const team = {
               name: sessionTeam.name,
               total: 0,
-              date: Date.now()
+              date: Date.now(),
+              capitan_name: sessionTeam.capitan_name,
+              capitan_image: sessionTeam.capitan_image
             }
             for(const round of rounds) {
               const allAnswers = await TeamAnswer.findAll({
