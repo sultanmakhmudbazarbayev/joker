@@ -19,6 +19,7 @@ class Answer extends Model {
         question_id: Sequelize.UUID,
         answer: Sequelize.STRING,
         image: Sequelize.STRING,
+        order: Sequelize.INTEGER
       },
       {
         sequelize,

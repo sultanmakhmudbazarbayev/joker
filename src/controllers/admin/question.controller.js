@@ -111,10 +111,11 @@ const controller = {
                 {
                     model: Answer,
                     as: "answers",
-                    order: [['created_at', 'ASC']]
                 },
-            ]
+            ],
+            order: [[{ model: Answer, as: 'answers' }, 'created_at', 'ASC']]
         })
+
 
         return res.status(200).json({question});
         } catch (error) {
@@ -183,7 +184,9 @@ const controller = {
         }
     },
     get_question_time: async (req, res, next) => {
-        const questionTimes = await QuestionTime.findAll()
+        const questionTimes = await QuestionTime.findAll({
+            order: [['time', 'ASC']]
+        })
 
         return res.status(200).json({time_options: questionTimes});
     },
