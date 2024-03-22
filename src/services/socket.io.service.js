@@ -177,6 +177,13 @@ const socketService = {
 
         });
 
+        socket.on("prev-round", data => {
+
+
+          io.to(sessionData.number).emit("_prev-round", data);
+
+        });
+
 
         socket.on("set-team-points", async data => {
           const {roundId, questionId, teamId, points} = data;
