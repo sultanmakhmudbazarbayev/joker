@@ -18,7 +18,8 @@ class QuizSession extends Model {
             type: Sequelize.ARRAY(Sequelize.TEXT),
         },
         quiz_id: Sequelize.UUID,
-        number: Sequelize.INTEGER
+        number: Sequelize.INTEGER,
+        results: Sequelize.JSONB
       },
       {
         sequelize,

@@ -102,17 +102,22 @@ const socketService = {
                           include: [{
                               model: Answer,
                               as: "answers",
-                              order: [['created_at', 'ASC']]
                           }],
+                          order: [[{ model: Answer, as: 'answers' }, 'created_at', 'ASC']]
                       }],
                   });
-      
+
                   if (!round) {
-                      io.to(sessionData.number).emit("_get-questions", { error: "Round not found" });
+                      io.
+                      // to(sessionData.number).
+                      emit("_get-questions", { error: "Round not found" });
                       return;
                   }
       
                   const updQuestions = await Promise.all(round.questions.map(async (q) => {
+
+                      q.answers.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+                      
                       const time = await QuestionTime.findByPk(q.question_time_id);
                       const type = await QuestionType.findByPk(q.question_type_id);
                       return {
@@ -122,7 +127,9 @@ const socketService = {
                       };
                   }));
       
-                  io.to(sessionData.number).emit("_get-questions", { questions: updQuestions });
+                  io.
+                  // to(sessionData.number).
+                  emit("_get-questions", { questions: updQuestions });
               } catch (error) {
                   console.error('Error retrieving questions:', error);
                   // Notify the client about the error
@@ -265,6 +272,11 @@ const socketService = {
               }
           });
 
+          await QuizSession.create({
+            number: sessionData.number,
+            results: {teams: halfResults}
+          })
+
           io
           .to(sessionData.number)
           .emit("_get-half-statistics", {teams: halfResults});
@@ -288,7 +300,8 @@ const socketService = {
             const team = {
               name: sessionTeam.name,
               total: 0,
-              date: Date.now()
+              date: Date.now(),
+              scoreHistory: [] // Add a score history array
             }
             for(const round of rounds) {
               const allAnswers = await TeamAnswer.findAll({
@@ -298,18 +311,36 @@ const socketService = {
                   team_id: sessionTeam.id,
                 }
               })
-              const roundTotal = allAnswers.reduce((total, current) => {
-                return total + current.points;
-              }, 0);
+              const roundTotal = allAnswers.reduce((total, current) => total + current.points, 0);
 
               team[`round_${round.count}`] = roundTotal;
               team.total += roundTotal;
+              team.scoreHistory.push(roundTotal);
             }
 
             halfResults.push(team);
           }
 
-          halfResults.sort((a, b) => b.total - a.total);
+          // Sort halfResults based on total points and, in case of a tie, by score history
+          halfResults.sort((a, b) => {
+              if (a.total !== b.total) {
+                  return b.total - a.total; // Descending order by total points
+              } else {
+                  // Compare scoreHistory arrays element by element
+                  for (let i = 0; i < a.scoreHistory.length; i++) {
+                      if (a.scoreHistory[i] !== b.scoreHistory[i]) {
+                          return b.scoreHistory[i] - a.scoreHistory[i]; // Descending order for round points
+                      }
+                  }
+                  return 0; // Teams are identical in scoring
+              }
+          });
+
+          await QuizSession.update({results: {teams: halfResults}}, {
+            where: {
+              number: sessionData.number
+            }
+          })
           
           io
           .to(sessionData.number)
@@ -335,8 +366,9 @@ const socketService = {
               name: sessionTeam.name,
               total: 0,
               date: Date.now(),
-	      capitan_image: sessionTeam.capitan_image,
-	      capitan_name: sessionTeam.capitan_name
+              scoreHistory: [], // Add a score history array
+              capitan_image: sessionTeam.capitan_image,
+              capitan_name: sessionTeam.capitan_name
             }
             for(const round of rounds) {
               const allAnswers = await TeamAnswer.findAll({
@@ -346,18 +378,36 @@ const socketService = {
                   team_id: sessionTeam.id,
                 }
               })
-              const roundTotal = allAnswers.reduce((total, current) => {
-                return total + current.points;
-              }, 0);
+              const roundTotal = allAnswers.reduce((total, current) => total + current.points, 0);
 
               team[`round_${round.count}`] = roundTotal;
               team.total += roundTotal;
+              team.scoreHistory.push(roundTotal);
             }
 
             halfResults.push(team);
           }
 
-          halfResults.sort((a, b) => b.total - a.total);
+                    // Sort halfResults based on total points and, in case of a tie, by score history
+          halfResults.sort((a, b) => {
+              if (a.total !== b.total) {
+                  return b.total - a.total; // Descending order by total points
+              } else {
+                  // Compare scoreHistory arrays element by element
+                  for (let i = 0; i < a.scoreHistory.length; i++) {
+                      if (a.scoreHistory[i] !== b.scoreHistory[i]) {
+                          return b.scoreHistory[i] - a.scoreHistory[i]; // Descending order for round points
+                      }
+                  }
+                  return 0; // Teams are identical in scoring
+              }
+          });
+
+          await QuizSession.update({results: {teams: halfResults}}, {
+            where: {
+              number: sessionData.number
+            }
+          })
           
           io
           .to(sessionData.number)
@@ -383,8 +433,9 @@ const socketService = {
               name: sessionTeam.name,
               total: 0,
               date: Date.now(),
-	      capitan_name: sessionTeam.capitan_name,
-	      capitan_image: sessionTeam.capitan_image
+              scoreHistory: [], // Add a score history array
+	            capitan_name: sessionTeam.capitan_name,
+	            capitan_image: sessionTeam.capitan_image
             }
             for(const round of rounds) {
               const allAnswers = await TeamAnswer.findAll({
@@ -394,18 +445,29 @@ const socketService = {
                   team_id: sessionTeam.id,
                 }
               })
-              const roundTotal = allAnswers.reduce((total, current) => {
-                return total + current.points;
-              }, 0);
+              const roundTotal = allAnswers.reduce((total, current) => total + current.points, 0);
 
               team[`round_${round.count}`] = roundTotal;
               team.total += roundTotal;
+              team.scoreHistory.push(roundTotal);
             }
 
             halfResults.push(team);
           }
 
-          halfResults.sort((a, b) => b.total - a.total);
+          halfResults.sort((a, b) => {
+            if (a.total !== b.total) {
+                return b.total - a.total; // Descending order by total points
+            } else {
+                // Compare scoreHistory arrays element by element
+                for (let i = 0; i < a.scoreHistory.length; i++) {
+                    if (a.scoreHistory[i] !== b.scoreHistory[i]) {
+                        return b.scoreHistory[i] - a.scoreHistory[i]; // Descending order for round points
+                    }
+                }
+                return 0; // Teams are identical in scoring
+            }
+        });
           
           io
           .to(sessionData.number)
