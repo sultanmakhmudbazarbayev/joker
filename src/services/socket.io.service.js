@@ -74,8 +74,7 @@ const socketService = {
         socket.on("join-team", (team) => {
           if(team.role === 'tv') {
             socket.join(sessionData.number);
-          }
-          if (team.id && team.name) {
+          } else if (!team.role && team.id && team.name) {
             // Check if the team is already in the room
             const alreadyInRoom = sessionData.teams.some(teamInRoom => teamInRoom.id === team.id);
         
@@ -226,33 +225,46 @@ const socketService = {
 
           const halfResults = [];
 
-          for(const sessionTeam of sessionData.teams) {
+          for (const sessionTeam of sessionData.teams) {
             const team = {
-              name: sessionTeam.name,
-              total: 0,
-              date: Date.now()
+                name: sessionTeam.name,
+                total: 0,
+                date: Date.now(),
+                scoreHistory: [] // Add a score history array
+            };
+            for (const round of rounds) {
+                const allAnswers = await TeamAnswer.findAll({
+                    where: {
+                        quiz_session_id: sessionData.id,
+                        round_id: round.id,
+                        team_id: sessionTeam.id,
+                    }
+                });
+                const roundTotal = allAnswers.reduce((total, current) => total + current.points, 0);
+        
+                team[`round_${round.count}`] = roundTotal;
+                team.total += roundTotal;
+                team.scoreHistory.push(roundTotal); // Update score history with round total
             }
-            for(const round of rounds) {
-              const allAnswers = await TeamAnswer.findAll({
-                where: {
-                  quiz_session_id: sessionData.id,
-                  round_id: round.id,
-                  team_id: sessionTeam.id,
-                }
-              })
-              const roundTotal = allAnswers.reduce((total, current) => {
-                return total + current.points;
-              }, 0);
-
-              team[`round_${round.count}`] = roundTotal;
-              team.total += roundTotal;
-            }
-
+        
             halfResults.push(team);
-          }
+        }
+        
+          // Sort halfResults based on total points and, in case of a tie, by score history
+          halfResults.sort((a, b) => {
+              if (a.total !== b.total) {
+                  return b.total - a.total; // Descending order by total points
+              } else {
+                  // Compare scoreHistory arrays element by element
+                  for (let i = 0; i < a.scoreHistory.length; i++) {
+                      if (a.scoreHistory[i] !== b.scoreHistory[i]) {
+                          return b.scoreHistory[i] - a.scoreHistory[i]; // Descending order for round points
+                      }
+                  }
+                  return 0; // Teams are identical in scoring
+              }
+          });
 
-          halfResults.sort((a, b) => b.total - a.total);
-          
           io
           .to(sessionData.number)
           .emit("_get-half-statistics", {teams: halfResults});
