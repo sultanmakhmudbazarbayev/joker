@@ -18,6 +18,7 @@ class Answer extends Model {
         },
         question_id: Sequelize.UUID,
         answer: Sequelize.STRING,
+        comment: Sequelize.TEXT,
         image: Sequelize.STRING,
         order: Sequelize.INTEGER
       },

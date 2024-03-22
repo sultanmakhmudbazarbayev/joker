@@ -33,7 +33,8 @@ const controller = {
             const values = {
                 correct: req.body.correct,
                 answer: req.body.answer,
-                image: req.body.image
+                image: req.body.image,
+                comment: req.body.comment
             }
     
             await Answer.update(values, {
