@@ -20,6 +20,7 @@ class Answer extends Model {
         answer: Sequelize.STRING,
         comment: Sequelize.TEXT,
         image: Sequelize.STRING,
+        correct_image: Sequelize.STRING,
         audio: Sequelize.STRING,
         video: Sequelize.STRING,
         order: Sequelize.INTEGER

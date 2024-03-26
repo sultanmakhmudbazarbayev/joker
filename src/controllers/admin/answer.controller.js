@@ -33,6 +33,7 @@ const controller = {
             const { id } = req.params;
             const values = {
                 correct: req.body.correct,
+                correct_image: req.body.correct_image,
                 answer: req.body.answer,
                 image: req.body.image,
                 comment: req.body.comment,
