@@ -20,6 +20,8 @@ class Answer extends Model {
         answer: Sequelize.STRING,
         comment: Sequelize.TEXT,
         image: Sequelize.STRING,
+        audio: Sequelize.STRING,
+        video: Sequelize.STRING,
         order: Sequelize.INTEGER
       },
       {
@@ -30,7 +32,7 @@ class Answer extends Model {
       }
     );
 
-    // this.sync({ alter: true });
+    this.sync({ alter: true });
     return this;
   }
 

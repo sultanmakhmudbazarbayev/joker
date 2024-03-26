@@ -6,6 +6,8 @@ import Answer from "../../models/Answer";
 import { DEFAULT_QUESTION_TIME, DEFAULT_QUESTION_TYPE, QUESTION_DEFAULT_IMAGE_URL, QUESTION_TYPES } from "../../constants";
 import QuestionType from "../../models/QuestionType";
 import QuestionTime from "../../models/QuestionTime";
+import CorrectAnswer from "../../models/CorrectAnswer";
+import { Sequelize } from "sequelize";
 
 const controller = {
     create: async (req, res, next) => {
@@ -112,12 +114,49 @@ const controller = {
                     model: Answer,
                     as: "answers",
                 },
+                {
+                    model: CorrectAnswer,
+                    as: "correct_answer"
+                }
             ],
             order: [[{ model: Answer, as: 'answers' }, 'created_at', 'ASC']]
         })
 
 
         return res.status(200).json({question});
+        } catch (error) {
+        next(error);
+        }
+    },
+
+    delete_question_by_id: async (req, res, next) => {
+        try {
+        const { id } = req.params;
+
+        // Find the question to get its round_id and order
+        const questionToDelete = await Question.findByPk(id);
+        if (!questionToDelete) {
+        console.log("Question not found");
+        return;
+        }
+
+        // Delete the question
+        await Question.destroy({
+            where: { id: id },
+        });
+
+        // Update the order of subsequent questions in the same round
+        await Question.update(
+        { order: Sequelize.literal('"order" - 1') },
+        {
+            where: {
+                round_id: questionToDelete.round_id,
+                order: { [Sequelize.Op.gt]: questionToDelete.order },
+            },
+        }
+        );
+
+        return res.status(200).json({});
         } catch (error) {
         next(error);
         }

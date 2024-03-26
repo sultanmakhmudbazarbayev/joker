@@ -16,6 +16,10 @@ route.get("/question/:id",
 // [verifyAdmin], 
 controller.get_question_by_id);
 
+route.delete("/question/:id", 
+// [verifyAdmin], 
+controller.delete_question_by_id);
+
 route.get("/question-types", 
 // [verifyAdmin], 
 controller.get_question_types);

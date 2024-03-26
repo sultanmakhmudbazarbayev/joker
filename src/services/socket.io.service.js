@@ -11,6 +11,7 @@ import { Op } from "sequelize";
 import Team from "../models/Team";
 import QuestionTime from "../models/QuestionTime";
 import QuestionType from "../models/QuestionType";
+import CorrectAnswer from "../models/CorrectAnswer";
 
 
 const sessionData = {}
@@ -99,17 +100,23 @@ const socketService = {
                       include: [{
                           model: Question,
                           as: "questions",
-                          include: [{
+                          include: [
+                            {
                               model: Answer,
                               as: "answers",
-                          }],
+                            },
+                            {
+                              model: CorrectAnswer,
+                              as: "correct_answer",
+                            }
+                          ],
                           order: [[{ model: Answer, as: 'answers' }, 'created_at', 'ASC']]
                       }],
                   });
 
                   if (!round) {
                       io.
-                      // to(sessionData.number).
+                      to(sessionData.number).
                       emit("_get-questions", { error: "Round not found" });
                       return;
                   }
@@ -128,7 +135,7 @@ const socketService = {
                   }));
       
                   io.
-                  // to(sessionData.number).
+                  to(sessionData.number).
                   emit("_get-questions", { questions: updQuestions });
               } catch (error) {
                   console.error('Error retrieving questions:', error);

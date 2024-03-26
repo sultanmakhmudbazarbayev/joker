@@ -6,6 +6,7 @@ import Answer from "../../models/Answer";
 import { ValidationError } from "~/src/utils/ApiError";
 import QuestionTime from "../../models/QuestionTime";
 import QuestionType from "../../models/QuestionType";
+import CorrectAnswer from "../../models/CorrectAnswer";
 
 const controller = {
     getQuizById: async (req, res, next) => {
@@ -27,6 +28,10 @@ const controller = {
                                     as: "answers",
                                     order: [['created_at', 'ASC']]
                                 },
+                                {
+                                    model: CorrectAnswer,
+                                    as: "correct_answer"
+                                }
                             ],
                             
                         }

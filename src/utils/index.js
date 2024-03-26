@@ -16,6 +16,7 @@ import QuizSession from "../models/QuizSession";
 import Tablet from "../models/Tablet";
 import QuestionType from "../models/QuestionType";
 import QuestionTime from "../models/QuestionTime";
+import CorrectAnswer from "../models/CorrectAnswer";
 
 export const getFiles = (path) => {
   return fs
@@ -42,6 +43,7 @@ export const syncModels = async () => {
     await Admin.sync();
     await Tablet.sync();
     await Answer.sync();
+    await CorrectAnswer.sync();
     await League.sync();
     await Player.sync();
     await Present.sync();

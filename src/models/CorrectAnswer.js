@@ -1,7 +1,7 @@
 import Sequelize, { Model } from "sequelize";
 import { v4 as uuidv4 } from 'uuid';
 
-class Question extends Model {
+class CorrectAnswer extends Model {
   static init(sequelize) {
     super.init(
       {
@@ -12,16 +12,13 @@ class Question extends Model {
           allowNull: false,
           unique: true,
         },
-        round_id: Sequelize.UUID,
-        quiz_id: Sequelize.UUID,
-        order: Sequelize.INTEGER,
-        question_time_id: Sequelize.UUID,
-        question_type_id: Sequelize.UUID,
-        question: Sequelize.STRING,
+        question_id: Sequelize.UUID,
+        answer: Sequelize.STRING,
+        comment: Sequelize.TEXT,
         image: Sequelize.STRING,
         audio: Sequelize.STRING,
         video: Sequelize.STRING,
-
+        order: Sequelize.INTEGER
       },
       {
         sequelize,
@@ -31,15 +28,13 @@ class Question extends Model {
       }
     );
 
-    // this.sync({ alter: true });
+    this.sync({ alter: true });
     return this;
   }
 
   static associate(models) {
-    this.belongsTo(models.Quiz, { foreignKey: "quiz_id", as: "quiz" });
-    this.hasMany(models.Answer, { foreignKey: "question_id", as: "answers" });
-    this.hasOne(models.CorrectAnswer, { foreignKey: "question_id", as: "correct_answer" });
+    this.belongsTo(models.Question, { foreignKey: "question_id", as: "question" });
   }
 }
 
-export default Question;
+export default CorrectAnswer;

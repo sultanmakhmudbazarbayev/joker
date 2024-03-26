@@ -16,5 +16,9 @@ route.delete("/answer/:id",
 // [verifyAdmin], 
 controller.delete);
 
+route.post("/correct-answer", 
+// [verifyAdmin], 
+controller.create_or_update_correct_answer);
+
 
 export default route;
